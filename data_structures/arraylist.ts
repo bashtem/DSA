@@ -10,32 +10,27 @@ export interface List<T> {
 }
 
 export class ArrayList<T = unknown> implements List<T> {
-  private readonly DEFAULT_LENGTH = 4;
+  private readonly DEFAULT_LENGTH = 10;
   private capacity = 0;
-  private array: T[];
+  private array: Array<T>;
 
-  constructor(...datas: T[]) {
+  constructor(datas: T[]) {
     let elementLength = datas.length;
     if (elementLength == 0) {
       this.array = Array<T>(this.DEFAULT_LENGTH);
       return;
     }
-    this.array = Array(elementLength);
+    this.array = Array<T>();
     for (let index = 0; index < elementLength; index++) {
-      this.array[this.array.length] = datas[index];
+      this.array[index] = datas[index];
+      this.capacity++;
     }
   }
 
   public add(data: T, index?: number): void {
     if (index != null && (index < 0 || index > this.capacity)) return;
 
-    if (this.capacity == this.array.length) {
-      let newArray = Array(this.array.length * 2);
-      for (let index = 0; index < this.array.length; index++) {
-        newArray[index] = this.array[index];
-      }
-      this.array = newArray;
-    }
+    if (this.capacity == this.array.length) this.doubleArrayCapacity();
 
     if (index == null || index == this.capacity) {
       this.array[this.capacity] = data;
@@ -48,6 +43,14 @@ export class ArrayList<T = unknown> implements List<T> {
 
     this.array[index] = data;
     this.capacity++;
+  }
+
+  private doubleArrayCapacity() {
+    let newArray = Array(this.array.length * 2);
+    for (let index = 0; index < this.array.length; index++) {
+      newArray[index] = this.array[index];
+    }
+    this.array = newArray;
   }
 
   public remove(index: number): T {
@@ -63,7 +66,7 @@ export class ArrayList<T = unknown> implements List<T> {
     return deletedItem;
   }
 
-  public at(index: number): T | undefined {
+  public at(index: number): T{
     if (index < 0 || index >= this.capacity) return null as T;
     return this.array[index];
   }
@@ -84,14 +87,21 @@ export class ArrayList<T = unknown> implements List<T> {
     return this.capacity == 0;
   }
 
+  public set(data: T, index: number): T {
+    if (index < 0 || index >= this.capacity) return null as T;
+    let updateItem = this.at(index);
+    this.array[index] = data;
+    return updateItem as T;
+  }
+
   public display(): void {
     if (this.capacity == 0) console.log("Array is Empty");
 
-    console.log(`--------------- START ---------------`)
+    console.log(`--------------- START ---------------`);
     for (let index = 0; index < this.capacity; index++) {
       console.log(`Item -> ${this.array[index]}\n`);
     }
-    console.log(`--------------- END ---------------\n`)
+    console.log(`--------------- END ---------------\n`);
   }
 }
 

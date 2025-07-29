@@ -9,12 +9,13 @@ export class Node<T> {
 
 export class LinkedList<T> {
   private head: Node<T> = null as unknown as Node<T>;
+  private capacity = 0;
 
   constructor(head: Node<T>) {
     this.head = head;
   }
 
-  // Add implemention
+  // Adding node implemention
   public add(newNode: Node<T>) {
     let current = this.head;
 
@@ -27,17 +28,19 @@ export class LinkedList<T> {
       current = current.next;
     }
     current.next = newNode;
+    this.capacity++;
   }
 
-  // Remove implementation
-  public remove(delData: T) {
+  // Removing node implementation
+  public remove(removeData: T) {
+    // can also remove using node index position from method parameter
     let current = this.head;
     let prev = current;
 
     if (!current) return;
 
     // Check if the head if the found item
-    if (current.data == delData) {
+    if (current.data == removeData) {
       this.head = current.next;
       current.next = null as unknown as Node<T>;
       return;
@@ -45,14 +48,19 @@ export class LinkedList<T> {
 
     while (current) {
       let tempNext = current.next;
-      if (current.data == delData) {
+      if (current.data == removeData) {
         prev.next = tempNext;
         current.next = null as unknown as Node<T>;
+        this.capacity--;
       } else {
         prev = current;
       }
       current = tempNext;
     }
+  }
+
+  public get size(): number {
+    return this.capacity;
   }
 
   public display() {

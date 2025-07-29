@@ -3,10 +3,10 @@ export class Stack<T = unknown> {
   private array = new Array<T>(4);
 
   public pop(): T {
-    if (this.capacity == 0) return null as unknown as T;
+    if (this.capacity == 0) return null as T;
 
     let popped = this.array[this.capacity - 1];
-    this.array[this.capacity - 1] = null as unknown as T;
+    this.array[this.capacity - 1] = null as T;
     this.capacity--;
     return popped;
   }
@@ -19,7 +19,7 @@ export class Stack<T = unknown> {
   }
 
   public peek(): T {
-    if (this.capacity == 0) return null as unknown as T;
+    if (this.capacity == 0) return null as T;
     return this.array[this.capacity - 1];
   }
 
