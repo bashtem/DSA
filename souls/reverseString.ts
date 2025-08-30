@@ -2,21 +2,31 @@
 
 // Examples:
 
-// "Hey fellow warriors"  --> "Hey wollef sroirraw" 
-// "This is a test        --> "This is a test" 
+// "Hey fellow warriors"  --> "Hey wollef sroirraw"
+// "This is a test        --> "This is a test"
 // "This is another test" --> "This is rehtona test"
 
 export function spinWords(words: string): string {
-    return words.split(' ').map((word) => {
-      if(word.length >=5){
-        return word.split('').reverse().join('');
-      }else return word;
-    }).join(' ');
+  return words
+    .split(" ")
+    .map((word) => {
+      if (word.length >= 5) {
+        return word.split("").reverse().join("");
+      } else return word;
+    })
+    .join(" ");
 }
-
 
 console.log(spinWords("Hey fellow warriors")); // "Hey wollef sroirraw"
 console.log(spinWords("This is a test")); // "This is a test"
 console.log(spinWords("This is another test")); // "This is rehtona test"
 console.log(spinWords("This is a longword test")); // "This is a drowgnol test"
 
+export function spinWords2(words: string): string {
+  let arrWords = words.split("");
+  let reversed = "";
+  for (const char of arrWords) {
+    reversed = char + reversed;
+  }
+  return reversed;
+}

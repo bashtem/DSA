@@ -61,7 +61,7 @@ export class ArrayList<T = unknown> implements List<T> {
     for (let i = index; i < this.capacity - 1; i++)
       this.array[i] = this.array[i + 1];
 
-    this.array[this.capacity - 1] = null as T;
+    this.array[this.capacity - 1] = null as T; // this is used to safely removed last array element
     this.capacity--;
     return deletedItem;
   }

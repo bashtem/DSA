@@ -11,7 +11,15 @@ export class HashMap<K, V> {
     return true;
   }
 
+  public delete():boolean{
+    return true;
+  }
+
   public get size(): number {
     return this.capacity;
+  }
+
+  private hashcode(key: K): number{
+    return 0;
   }
 }

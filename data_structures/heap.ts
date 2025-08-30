@@ -62,31 +62,6 @@ export class MaxHeap<T> extends Heap {
     return;
   }
 
-  // Implementation using a recursive function call
-  private heapifyDown(index: number) {
-    let heapSize = this.heap.size;
-    let leftIndex = this.left(index);
-    let rightIndex = this.right(index);
-    let largest = index;
-
-    if (leftIndex < heapSize && this.heap.at(leftIndex) > this.heap.at(largest))
-      largest = leftIndex;
-
-    if (
-      rightIndex < heapSize &&
-      this.heap.at(rightIndex) > this.heap.at(largest)
-    )
-      largest = rightIndex;
-
-    if (index != largest) {
-      let parentVal = this.heap.at(index);
-      this.heap.set(this.heap.at(largest), index);
-      this.heap.set(parentVal, largest);
-      this.heapifyDown(largest);
-    }
-    return;
-  }
-
   // Method 2 implemntation using a while loop
   //   private heapifyDown(index: number) {
   //     while (true) {
@@ -95,20 +70,48 @@ export class MaxHeap<T> extends Heap {
 
   //       if (leftIndex > this.heap.size) break;
 
-  //       let largest =
+  //       let largestIndex =
   //         this.heap.at(leftIndex) >= this.heap.at(rightIndex)
   //           ? leftIndex
   //           : rightIndex;
 
-  //       if (this.heap.at(largest) < this.heap.at(index)) break;
+  //       if (this.heap.at(largestIndex) < this.heap.at(index)) break;
 
   //       let parentVal = this.heap.at(index);
-  //       this.heap.set(this.heap.at(largest), index);
-  //       this.heap.set(parentVal, largest);
+  //       this.heap.set(this.heap.at(largestIndex), index);
+  //       this.heap.set(parentVal, largestIndex);
+  //       index = largestIndex
   //     }
 
   //     return;
   //   }
+
+  // Implementation using a recursive function call
+  private heapifyDown(index: number) {
+    let heapSize = this.heap.size;
+    let leftIndex = this.left(index);
+    let rightIndex = this.right(index);
+    let largestIndex = index;
+
+    if (leftIndex < heapSize && this.heap.at(leftIndex) > this.heap.at(largestIndex))
+      largestIndex = leftIndex;
+
+    if (
+      rightIndex < heapSize &&
+      this.heap.at(rightIndex) > this.heap.at(largestIndex)
+    )
+      largestIndex = rightIndex;
+
+    if (index != largestIndex) {
+      let parentVal = this.heap.at(index);
+      this.heap.set(this.heap.at(largestIndex), index);
+      this.heap.set(parentVal, largestIndex);
+      this.heapifyDown(largestIndex);
+    }
+    return;
+  }
+
+  
 
   public buildMaxHeap() {
     if (this.heap.size == 0) return [];

@@ -15,14 +15,14 @@ export class LinkedList<T> {
     this.head = head;
   }
 
-  // Adding node implemention
   public add(newNode: Node<T>) {
-    let current = this.head;
-
-    if (!current) {
+    if (!this.capacity) {
       this.head = newNode;
+      this.capacity++;
       return;
     }
+
+    let current = this.head;
 
     while (current.next) {
       current = current.next;
@@ -31,7 +31,6 @@ export class LinkedList<T> {
     this.capacity++;
   }
 
-  // Removing node implementation
   public remove(removeData: T) {
     // can also remove using node index position from method parameter
     let current = this.head;
