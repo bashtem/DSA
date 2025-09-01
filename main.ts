@@ -1,8 +1,17 @@
-// Sliding Window Pattern
+import { LinkedList } from "./data_structures/linkedlist";
+
+let li = new LinkedList();
+
+li.add(2);
+li.add(4);
+li.add(9);
+li.add(12);
+
+li.display()
+
+// li.shift()
+// li.reverse()
 
 
 
-// let x = maxSubArray([-2,1,-3,4,-1,2,1,-5,4])
-
-// console.log()
-
+li.display()

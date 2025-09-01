@@ -6,9 +6,15 @@
 
 // Solution Idea
 /** NB: i-1 is the index before i. if i = 3, then  i-1 = 2
- * if arr[i - 1] > 0, we need to include arr[i - 1] to calculate arr[i]. 
- * The idea is simple: arr[i - 1] + arr[i] will be always greater than arr[i].
- *  So in this case, we update max = arr[i-1] + arr[i]
+ *  if arr[i - 1] > 0, we need to include arr[i - 1] to calculate arr[i]. 
+ *  The idea is simple: arr[i - 1] + arr[i] will be always greater than arr[i].
+ *  So in this case, we update sum = arr[i-1] + arr[i] then update Max
+ * 
+ *  if arr[i - 1] < 0, we need to ignore arr[i -1],
+ *  because arr[i - 1] + arr[i] will be always less than arr[i].
+ *  So we just update sum = arr[i] then update Max
+ * 
+ * [-2,1,-3,4,-1,2,1,-5,4]  max = 6
  */
 
 function maxSubArray(nums: number[]): number {
@@ -24,12 +30,14 @@ function maxSubArray(nums: number[]): number {
   return max;
 }
 
+
+
 function maxSubArray2(nums: number[]): number {
     let res = nums[0];
     let currSum = 0;
 
     for (const num of nums) {
-        if (currSum < 0) {
+        if (currSum < 0) { // this condition will ignore previous array value of accumulation if less than zero
             currSum = 0;
         }
         currSum += num;

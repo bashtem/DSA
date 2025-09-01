@@ -1,4 +1,4 @@
-export class Node<T> {
+export class Node<T = unknown> {
   public data: T;
   public next: Node<T> = null as unknown as Node<T>;
 
@@ -7,43 +7,109 @@ export class Node<T> {
   }
 }
 
-export class LinkedList<T> {
-  private head: Node<T> = null as unknown as Node<T>;
-  private capacity = 0;
+/**
+ * add
+ * pop
+ * shift
+ * unshift
+ * reverse
+ * display
+ * not imple -> get, set, insert, remove
+ */
 
-  constructor(head: Node<T>) {
-    this.head = head;
+export class LinkedList<T> {
+  private head: Node<T>;
+  private tail: Node<T>;
+  private capacity;
+
+  constructor() {
+    this.head = null as unknown as Node<T>;
+    this.tail = null as unknown as Node<T>;
+    this.capacity = 0;
   }
 
-  public add(newNode: Node<T>) {
+  public add(data: T) {
+    let newNode = new Node(data);
     if (!this.capacity) {
       this.head = newNode;
+      this.tail = this.head;
       this.capacity++;
       return;
     }
 
-    let current = this.head;
-
-    while (current.next) {
-      current = current.next;
-    }
-    current.next = newNode;
+    this.tail.next = newNode;
+    this.tail = this.tail.next;
     this.capacity++;
   }
 
-  public remove(removeData: T) {
-    // can also remove using node index position from method parameter
-    let current = this.head;
-    let prev = current;
+  //remove a node from the end of list
+  public pop() {
+    if (!this.head) return;
 
-    if (!current) return;
-
-    // Check if the head if the found item
-    if (current.data == removeData) {
-      this.head = current.next;
-      current.next = null as unknown as Node<T>;
+    if (!this.head.next) {
+      this.head = this.tail = null as unknown as Node<T>;
+      this.capacity--;
       return;
     }
+
+    let prev = this.head;
+    let current = this.head.next;
+
+    while (current.next) {
+      prev = current;
+      current = current.next;
+    }
+
+    let removed = prev.next;
+    prev.next = null as unknown as Node<T>;
+    this.tail = prev;
+    this.capacity--;
+    return removed;
+  }
+
+  public shift() {
+    if (!this.head) return;
+
+    if (!this.head.next) {
+      this.head = this.tail = null as unknown as Node<T>;
+      this.capacity--;
+      return;
+    }
+
+    let newHead = this.head.next;
+    let removed = this.head;
+    this.head = null as unknown as Node<T>;
+    this.head = newHead;
+    this.capacity--;
+    return removed;
+  }
+
+  public unshift(data: T) {
+    let newNode = new Node(data);
+    if (!this.head) {
+      this.head = newNode;
+      this.tail = this.head;
+      this.capacity++;
+      return;
+    }
+
+    newNode.next = this.head;
+    this.head = newNode;
+    this.capacity++;
+  }
+
+  public findRemove(removeData: T) {
+    if (!this.head) return;
+
+    // Check if the head is the search item
+    if (this.head.data == removeData) {
+      this.head = this.head.next;
+      this.capacity--;
+      return;
+    }
+
+    let prev = this.head;
+    let current = this.head.next;
 
     while (current) {
       let tempNext = current.next;
@@ -56,6 +122,26 @@ export class LinkedList<T> {
       }
       current = tempNext;
     }
+  }
+
+  public reverse() {
+    if (!this.head) return null;
+
+    if (!this.head.next) return this.head;
+
+    let prev = null as unknown as Node<T>;
+    let current = this.head;
+    this.tail = current;
+
+    while (current.next) {
+      let nextNode = current.next;
+      current.next = prev;
+      prev = current;
+      current = nextNode;
+    }
+
+    current.next = prev;
+    this.head = current;
   }
 
   public get size(): number {
@@ -79,4 +165,9 @@ export class LinkedList<T> {
     if (current) console.log(`Node number ${nodeCount} -> ${current.data}\n`);
     console.log(`---------- END --------- \n\n`);
   }
+}
+
+
+class DoublyLinkedList{
+  
 }

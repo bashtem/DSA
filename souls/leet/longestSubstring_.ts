@@ -33,12 +33,22 @@ export function lengthOfLongestSubstring2(s: string): number { // More Optimized
   for (let index = 0; index < s.length; index++) {
     const each = s[index];
 
+    // CONDITION = (map.get(each) >= leftIndex) ensure the stored char index is not before the pointer index
+    // i.e only get char index between the pointer and the iterating char index since we ain't clearing the cache.
+   
+    //‼️‼️‼️ Optionally we can use -> leftIndex = Math.max(leftIndex, map.get(each) + 1) and omit the "CONDITION"
+    // if (map.has(each)) {
+    //   leftIndex = Math.max(leftIndex, map.get(each) + 1)
+    // }
+
     if (map.has(each) && map.get(each) >= leftIndex) {
       leftIndex = map.get(each) + 1;
     }
 
+
+
     map.set(each, index);
-    longest = Math.max(longest, index - leftIndex + 1);
+    longest = Math.max(longest, index - leftIndex + 1); // this will get the length between two indices (offset length)
   }
 
   return longest;
