@@ -1,17 +1,21 @@
-import { LinkedList } from "./data_structures/linkedlist";
+import { DoublyLinkedList, LinkedList } from "./data_structures/linkedlist";
+import { BinarySearchTree } from "./data_structures/trees";
 
-let li = new LinkedList();
+let bst = new BinarySearchTree()
 
-li.add(2);
-li.add(4);
-li.add(9);
-li.add(12);
+let res = bst.insert(50);
+bst.insert(43)
+bst.insert(55)
+bst.insert(58)
+bst.insert(40)
+bst.insert(40)
+bst.insert(10)
+bst.insert(15)
+bst.insert(150)
+bst.insert(54)
+bst.insert(53)
 
-li.display()
-
-// li.shift()
-// li.reverse()
+console.log(res)
 
 
-
-li.display()
+console.log(bst.search(58))
