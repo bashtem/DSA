@@ -11,10 +11,17 @@ export class TreeNode<T> {
 }
 
 export class BinarySearchTree<T> {
-  private root: TreeNode<T> | null = null;
-  private capacity = 0;
+  private root: TreeNode<T> | null;
+  private capacity;
 
-  constructor() {}
+  constructor() {
+    this.root = null;
+    this.capacity = 0;
+  }
+
+  public get size(): number {
+    return this.capacity;
+  }
 
   public insert(data: T) {
     let newNode = new TreeNode(data);
@@ -43,7 +50,40 @@ export class BinarySearchTree<T> {
     return this;
   }
 
-  public remove(data: T) {}
+  // recursive insert
+  public insertRecursive(
+    data: T,
+    node: TreeNode<T> = this.root as TreeNode<T>
+  ) {
+    if (this.capacity === 0) {
+      this.root = new TreeNode(data);
+      this.capacity++;
+      return this;
+    }
+
+    if (data === node.data) return this;
+
+    if (this.capacity !== 0) {
+      if (node.leftNode === null && data < node.data) {
+        node.leftNode = new TreeNode(data);
+        this.capacity++;
+        return this;
+      }
+      if (node.rightNode === null && data > node.data) {
+        node.rightNode = new TreeNode(data);
+        this.capacity++;
+        return this;
+      }
+    }
+
+    if (data < node.data) {
+      this.insertRecursive(data, node.leftNode as TreeNode<T>);
+    }
+
+    if (data > node.data) {
+      this.insertRecursive(data, node.rightNode as TreeNode<T>);
+    }
+  }
 
   public search(data: T): boolean {
     if (this.root === null) return false;
@@ -60,7 +100,11 @@ export class BinarySearchTree<T> {
     return false;
   }
 
-  public get size(): number {
-    return this.capacity;
+  public remove(data: T) { //:Todo
+    if (this.root === null) return false;
+
+    let current = this.root;
+
+    while (true) {}
   }
 }

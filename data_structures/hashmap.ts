@@ -1,5 +1,10 @@
 export class HashMap<K, V> {
   private capacity = 0;
+  private list: Array<V>;
+
+  constructor() {
+    this.  list = new Array();
+  }
 
   public set(key: K, value: V) {}
 
@@ -11,7 +16,7 @@ export class HashMap<K, V> {
     return true;
   }
 
-  public delete():boolean{
+  public delete(): boolean {
     return true;
   }
 
@@ -19,7 +24,7 @@ export class HashMap<K, V> {
     return this.capacity;
   }
 
-  private hashcode(key: K): number{
+  private _hash(key: K): number {
     return 0;
   }
 }

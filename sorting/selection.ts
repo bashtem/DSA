@@ -15,6 +15,5 @@ export function selectionSort<T>(array: T[]) {
         array[index] = temp
     }
   }
-
   return array;
 }

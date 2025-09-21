@@ -1,21 +1,24 @@
-import { DoublyLinkedList, LinkedList } from "./data_structures/linkedlist";
-import { BinarySearchTree } from "./data_structures/trees";
+import { Graph } from "./data_structures/graph";
 
-let bst = new BinarySearchTree()
+let g = new Graph();
 
-let res = bst.insert(50);
-bst.insert(43)
-bst.insert(55)
-bst.insert(58)
-bst.insert(40)
-bst.insert(40)
-bst.insert(10)
-bst.insert(15)
-bst.insert(150)
-bst.insert(54)
-bst.insert(53)
+g.addVertex("bashtem")
+g.addVertex("motunrayo")
+g.addVertex("madinah")
+g.addVertex("naheemah")
+g.addVertex("rahman")
 
-console.log(res)
+g.addEdge("bashtem", "rahman")
+g.addEdge("bashtem", "naheemah")
+g.addEdge("bashtem", "madinah")
+g.addEdge("madinah", "rahman" )
+g.addEdge("madinah", "naheemah" )
+g.addEdge("bashtem", "motunrayo")
+g.addEdge("naheemah", "rahman" )
+
+console.log(g)
 
 
-console.log(bst.search(58))
+export function dijkstraTraversal(){
+
+}
