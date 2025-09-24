@@ -1,24 +1,22 @@
-import { Graph } from "./data_structures/graph";
+import { Graph, WeightedGraph } from "./data_structures/graph";
+import { PriorityQueue } from "./data_structures/priorityQueue";
 
-let g = new Graph();
+let g = new WeightedGraph();
 
-g.addVertex("bashtem")
-g.addVertex("motunrayo")
-g.addVertex("madinah")
-g.addVertex("naheemah")
-g.addVertex("rahman")
+g.addVertex("a");
+g.addVertex("b");
+g.addVertex("c");
+g.addVertex("d");
+g.addVertex("e");
 
-g.addEdge("bashtem", "rahman")
-g.addEdge("bashtem", "naheemah")
-g.addEdge("bashtem", "madinah")
-g.addEdge("madinah", "rahman" )
-g.addEdge("madinah", "naheemah" )
-g.addEdge("bashtem", "motunrayo")
-g.addEdge("naheemah", "rahman" )
+g.addEdge("a", "b", 3);
+g.addEdge("a", "c", 2);
+g.addEdge("a", "e", 4);
+g.addEdge("b", "c", 8);
+g.addEdge("c", "d", 1);
+g.addEdge("d", "e", 3);
 
-console.log(g)
+console.log(g);
 
-
-export function dijkstraTraversal(){
-
-}
+let dist = g.dijkstraTraversal("d", "a");
+console.log(dist)

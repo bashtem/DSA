@@ -1,22 +1,22 @@
 import { ArrayList } from "./arraylist";
 
-abstract class Heap {
-  protected left(index: number) {
+export abstract class Heap {
+  protected leftChildIndex(index: number) {
     return 2 * index + 1;
   }
 
-  protected right(index: number) {
+  protected rightChildIndex(index: number) {
     return 2 * index + 2;
   }
 
-  protected parent(index: number) {
+  protected parentIndex(index: number) {
     return Math.floor((index - 1) / 2);
   }
 }
 
 // Binary heap is mostly used to implement a priority queue
-export class MaxHeap<T> extends Heap {
-  private heap: ArrayList<T>;
+export class MaxHeap<T = number> extends Heap {
+  public heap: ArrayList<T>;
 
   public constructor(data: T[]) {
     super();
@@ -26,7 +26,6 @@ export class MaxHeap<T> extends Heap {
   public insert(data: T) {
     this.heap.push(data);
     this.heapifyUp(this.heap.size - 1);
-    this.heap.display();
   }
 
   public remove(): T {
@@ -35,27 +34,26 @@ export class MaxHeap<T> extends Heap {
     this.heap.set(lastItem, 0);
     this.heap.pop();
     this.heapifyDown(0);
-    this.heap.display();
     return removedItem;
   }
 
   private heapifyUp(index: number) {
     while (true) {
-      let parentVal = this.heap.at(this.parent(index));
+      let parentVal = this.heap.at(this.parentIndex(index));
 
       if (index == 0 || parentVal >= this.heap.at(index)) break;
 
-      this.heap.set(this.heap.at(index) as T, this.parent(index));
+      this.heap.set(this.heap.at(index) as T, this.parentIndex(index));
       this.heap.set(parentVal, index);
-      index = this.parent(index);
+      index = this.parentIndex(index);
     }
     return;
   }
 
   // Implementation using a recursive function call
   private heapifyDown(index: number) {
-    let leftIndex = this.left(index);
-    let rightIndex = this.right(index);
+    let leftIndex = this.leftChildIndex(index);
+    let rightIndex = this.rightChildIndex(index);
 
     if (leftIndex > this.heap.size) return;
 
@@ -65,7 +63,6 @@ export class MaxHeap<T> extends Heap {
         : rightIndex;
 
     if (this.heap.at(largestIndex) < this.heap.at(index)) return;
-
     let parentVal = this.heap.at(index);
     this.heap.set(this.heap.at(largestIndex), index);
     this.heap.set(parentVal, largestIndex);
@@ -84,12 +81,12 @@ export class MaxHeap<T> extends Heap {
 
   // Implementation using recusive function call
   // private heapifyUp(index: number) {
-  //   let parentVal = this.heap.at(this.parent(index)) as T;
+  //   let parentVal = this.heap.at(this.parentIndex(index)) as T;
 
   //   if (index != 0 && parentVal < this.heap.at(index)) {
-  //     this.heap.set(this.heap.at(index) as T, this.parent(index));
+  //     this.heap.set(this.heap.at(index) as T, this.parentIndex(index));
   //     this.heap.set(parentVal, index);
-  //     this.heapifyUp(this.parent(index));
+  //     this.heapifyUp(this.parentIndex(index));
   //   }
   // }
 
@@ -127,37 +124,37 @@ export class MinHeap<T> extends Heap {
   }
 
   private heapifyUp(index: number) {
-    let parentValue = this.heap.at(this.parent(index));
+    let parentValue = this.heap.at(this.parentIndex(index));
     let childValue = this.heap.at(index);
     if (index > 0 && parentValue > childValue) {
-      this.heap.set(childValue, this.parent(index));
+      this.heap.set(childValue, this.parentIndex(index));
       this.heap.set(parentValue, index);
-      this.heapifyUp(this.parent(index));
+      this.heapifyUp(this.parentIndex(index));
     }
   }
 
   private heapifyDown(index: number) {
-    let leftValue = this.heap.at(this.left(index));
-    let rightValue = this.heap.at(this.right(index));
+    let leftValue = this.heap.at(this.leftChildIndex(index));
+    let rightValue = this.heap.at(this.rightChildIndex(index));
     let smallestIndex = index;
 
     if (
-      this.left(index) < this.heap.size &&
+      this.leftChildIndex(index) < this.heap.size &&
       leftValue < this.heap.at(smallestIndex)
     )
-      smallestIndex = this.left(index);
+      smallestIndex = this.leftChildIndex(index);
     if (
-      this.right(index) < this.heap.size &&
+      this.rightChildIndex(index) < this.heap.size &&
       rightValue < this.heap.at(smallestIndex)
     )
-      smallestIndex = this.right(index);
+      smallestIndex = this.rightChildIndex(index);
 
-    if (smallestIndex != index) {
-      let smallestValue = this.heap.at(smallestIndex);
-      this.heap.set(this.heap.at(index), smallestIndex);
-      this.heap.set(smallestValue, index);
-      this.heapifyDown(smallestIndex);
-    }
+    if (smallestIndex === index) return;
+
+    let smallestValue = this.heap.at(smallestIndex);
+    this.heap.set(this.heap.at(index), smallestIndex);
+    this.heap.set(smallestValue, index);
+    this.heapifyDown(smallestIndex);
   }
 
   public buildMinHeap() {

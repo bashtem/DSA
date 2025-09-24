@@ -2,8 +2,13 @@ import { ArrayList } from "./arraylist";
 import { Node } from "./linkedlist";
 
 export class Queue<T = unknown> {
-  private arrayList = new ArrayList<T>([]);
-  private capacity = 0;
+  private arrayList: ArrayList<T>;
+  private capacity: number;
+
+  constructor(){
+    this.arrayList = new ArrayList<T>([]);
+    this.capacity = 0
+  }
 
   public enqueue(data: T) {
     this.arrayList.add(data);
