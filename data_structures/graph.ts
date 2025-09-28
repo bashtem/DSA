@@ -36,21 +36,17 @@ export class Graph<T = string> {
 
   dfsTraversal(node: T) {
     let stack = new Stack<T>();
-    let visitedSet = new Set<T>();
+    let visited = new Set<T>();
     let result = new Array<T>();
     stack.push(node);
-    visitedSet.add(node);
 
-    let vertex;
     while (!stack.isEmpty) {
-      vertex = stack.pop();
+      let vertex = stack.pop();
       result.push(vertex as T);
+      visited.add(vertex);
 
       this.adjacencyList.get(vertex)?.forEach((neighbour) => {
-        if (!visitedSet.has(neighbour)) {
-          stack.push(neighbour);
-          visitedSet.add(neighbour);
-        }
+        if (!visited.has(neighbour)) stack.push(neighbour);
       });
     }
     return result;
@@ -58,21 +54,17 @@ export class Graph<T = string> {
 
   bfsTraversal(node: T) {
     let queue = new Queue<T>();
-    let visitedSet = new Set();
-    let result = new Array();
+    let visited = new Set<T>();
+    let result = new Array<T>();
     queue.enqueue(node);
-    visitedSet.add(node);
 
-    let vertex;
     while (!queue.isEmpty) {
-      vertex = queue.dequeue();
+      let vertex = queue.dequeue();
       result.push(vertex);
+      visited.add(vertex);
 
       this.adjacencyList.get(vertex)?.forEach((neighbour) => {
-        if (!visitedSet.has(neighbour)) {
-          queue.enqueue(neighbour);
-          visitedSet.add(neighbour);
-        }
+        if (!visited.has(neighbour)) queue.enqueue(neighbour);
       });
     }
     return result;
@@ -101,15 +93,17 @@ export class Graph<T = string> {
 // console.log(res)
 
 interface WeightedEdge<T> {
-  node: T;
+  neighbour: T;
   weight: number;
 }
 
 export class WeightedGraph<T = string> {
   private adjacencyList: Map<T, Set<WeightedEdge<T>>>;
+  directed: boolean;
 
-  constructor() {
+  constructor(options?: { directed: false }) {
     this.adjacencyList = new Map();
+    this.directed = options?.directed as boolean;
   }
 
   addVertex(vertex: T) {
@@ -119,23 +113,27 @@ export class WeightedGraph<T = string> {
   removeVertex(vertex: T) {
     this.adjacencyList
       .get(vertex)
-      ?.forEach(({ node, weight }) => this.removeEdge(vertex, node, weight));
+      ?.forEach(({ neighbour, weight }) =>
+        this.removeEdge(vertex, neighbour, weight)
+      );
 
     this.adjacencyList.delete(vertex);
   }
 
-  addEdge(u: T, v: T, weight: number, directed = false) {
-    this.adjacencyList.get(u)?.add({ node: v, weight });
-    if (!directed) this.adjacencyList.get(v)?.add({ node: u, weight });
+  addEdge(u: T, v: T, weight: number) {
+    this.adjacencyList.get(u)?.add({ neighbour: v, weight });
+    if (!this.directed)
+      this.adjacencyList.get(v)?.add({ neighbour: u, weight });
   }
 
-  removeEdge(u: T, v: T, weight: number, directed = false) {
-    this.adjacencyList.get(u)?.delete({ node: v, weight });
-    if (!directed) this.adjacencyList.get(v)?.delete({ node: u, weight });
+  removeEdge(u: T, v: T, weight: number) {
+    this.adjacencyList.get(u)?.delete({ neighbour: v, weight });
+    if (!this.directed)
+      this.adjacencyList.get(v)?.delete({ neighbour: u, weight });
   }
 
   dijkstraTraversal(startVertex: T, endVertex: T) {
-    // initialize a hashmap to store each vertex distance to the end vertex and the connecting vertex call previous.
+    // initialize a hashmap to store each vertex distance to the end vertex and the connecting vertex named "previous".
     // e.g {A: {distance: 0, previous: null}}, {B: {distance: Infinity, previous: null}}
     const distances = new Map<T, { distance: number; previous: T | null }>();
     // initialize a Priority Queue to store each vertices distance from smallest.
@@ -157,7 +155,7 @@ export class WeightedGraph<T = string> {
       let { data: vtx, priority: vtxWeight }: Entry<T> = pq.dequeue();
       visited.add(vtx);
 
-      this.adjacencyList.get(vtx)?.forEach(({ node: neighbour, weight }) => {
+      this.adjacencyList.get(vtx)?.forEach(({ neighbour, weight }) => {
         if (!visited.has(neighbour)) {
           let newDistance = vtxWeight + weight;
           if ((distances.get(neighbour)?.distance as number) > newDistance) {
@@ -178,6 +176,49 @@ export class WeightedGraph<T = string> {
     while (vtx?.previous !== null) {
       result = [vtx?.previous as T, ...result];
       if (vtx && vtx.previous) vtx = distances.get(vtx?.previous);
+    }
+    return { totalDistance, result };
+  }
+
+  bellmanFordTraversal(startVtx: T, endVtx: T) {
+    // Bellman ford Algorithm doesn't consider the Vertex with the smallest diatnce in the distance table unlike Dijkstra's Algorithm
+    let distances = new Map<T, { distance: number; previous: T | null }>();
+
+    // initialize the distances table
+    for (const vtx of this.adjacencyList.keys()) {
+      if (vtx == startVtx) distances.set(vtx, { distance: 0, previous: null });
+      else distances.set(vtx, { distance: Infinity, previous: null });
+    }
+
+    let iterations = this.adjacencyList.size - 1;
+
+    for (let i = 0; i < iterations; i++) {
+      for (const [vtx, edges] of this.adjacencyList) {
+        // iterate each vertex in the adjacency list
+        edges.forEach(({ neighbour, weight }) => {
+          // iterate all edges for the selected vertex in the adjacency list
+          let newDistance = (distances.get(vtx)?.distance as number) + weight;
+          let neighborDist = distances.get(neighbour)?.distance as number; // neighbour Distance
+          distances.set(neighbour, {
+            distance: Math.min(neighborDist, newDistance),
+            previous: vtx,
+          });
+        });
+      }
+    }
+
+    //build the shortest route from endVertex to startVertex using the distances hashmap
+    let vtx = distances.get(endVtx);
+    if (!vtx) return;
+
+    let totalDistance = vtx.distance;
+    let result = [endVtx];
+
+    while (vtx) {
+      if (vtx.previous !== null) {
+        result = [vtx.previous, ...result];
+        vtx = distances.get(vtx.previous);
+      }
     }
     return { totalDistance, result };
   }
