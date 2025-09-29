@@ -98,12 +98,12 @@ interface WeightedEdge<T> {
 }
 
 export class WeightedGraph<T = string> {
-  private adjacencyList: Map<T, Set<WeightedEdge<T>>>;
+  adjacencyList: Map<T, Set<WeightedEdge<T>>>;
   directed: boolean;
 
-  constructor(options?: { directed: false }) {
+  constructor(options?: { directed: boolean }) {
     this.adjacencyList = new Map();
-    this.directed = options?.directed as boolean;
+    this.directed = (options?.directed as boolean) ?? false;
   }
 
   addVertex(vertex: T) {
@@ -130,6 +130,25 @@ export class WeightedGraph<T = string> {
     this.adjacencyList.get(u)?.delete({ neighbour: v, weight });
     if (!this.directed)
       this.adjacencyList.get(v)?.delete({ neighbour: u, weight });
+  }
+
+  edges() {
+    let result: Array<{ u: T; v: T; weight: number }> = new Array();
+    for (const [vtx, edges] of this.adjacencyList) {
+      edges.forEach(({ neighbour, weight }) => {
+        result.push({ u: vtx, v: neighbour, weight });
+      });
+    }
+    return result;
+  }
+
+  edge(u: T, v: T) {
+    let uvWeight;
+    let uEdges = this.adjacencyList.get(u);
+    uEdges?.forEach(({ neighbour, weight }) => {
+      if (v === neighbour) uvWeight = weight;
+    });
+    return uvWeight;
   }
 
   dijkstraTraversal(startVertex: T, endVertex: T) {
@@ -173,39 +192,57 @@ export class WeightedGraph<T = string> {
     let totalDistance = vtx.distance;
     let result = [endVertex];
 
-    while (vtx?.previous !== null) {
-      result = [vtx?.previous as T, ...result];
-      if (vtx && vtx.previous) vtx = distances.get(vtx?.previous);
+    while (vtx) {
+      if (vtx.previous !== null) result = [vtx.previous, ...result];
+      vtx = distances.get(vtx.previous as T);
     }
     return { totalDistance, result };
   }
 
-  bellmanFordTraversal(startVtx: T, endVtx: T) {
+  bellmanfordTraversal(startVtx: T, endVtx: T) {
     // Bellman ford Algorithm doesn't consider the Vertex with the smallest diatnce in the distance table unlike Dijkstra's Algorithm
     let distances = new Map<T, { distance: number; previous: T | null }>();
 
-    // initialize the distances table
+    // initialize the distances table i.e intialize the costs and previous vertex
+    // Set cost[s] = 0 (Source), cost[v] = Infinity (others) and previous[v] = Null
     for (const vtx of this.adjacencyList.keys()) {
       if (vtx == startVtx) distances.set(vtx, { distance: 0, previous: null });
       else distances.set(vtx, { distance: Infinity, previous: null });
     }
 
+    // We use this to track for distance update within an iteration to end the remaining iterations if not update occur.
+    let isRelaxed;
     let iterations = this.adjacencyList.size - 1;
 
+    // Relax all Edges Repeatedly for (V-1) TImes:
     for (let i = 0; i < iterations; i++) {
+      isRelaxed = false;
+      // iterate each vertex in the adjacency list
       for (const [vtx, edges] of this.adjacencyList) {
-        // iterate each vertex in the adjacency list
-        edges.forEach(({ neighbour, weight }) => {
-          // iterate all edges for the selected vertex in the adjacency list
+        // iterate all edges for the selected vertex in the adjacency list
+        for (const { neighbour, weight } of edges) {
           let newDistance = (distances.get(vtx)?.distance as number) + weight;
           let neighborDist = distances.get(neighbour)?.distance as number; // neighbour Distance
-          distances.set(neighbour, {
-            distance: Math.min(neighborDist, newDistance),
-            previous: vtx,
-          });
-        });
+          if (neighborDist > newDistance) {
+            distances.set(neighbour, { distance: newDistance, previous: vtx });
+            isRelaxed = true;
+          }
+        }
       }
+      if (!isRelaxed) break;
     }
+
+    // Check for Negative-weight cycles.
+    if (isRelaxed)
+      for (const [vtx, edges] of this.adjacencyList) {
+        for (const { neighbour, weight } of edges) {
+          let vtxCost = (distances.get(vtx)?.distance as number) + weight;
+          if ((distances.get(neighbour)?.distance as number) > vtxCost) {
+            console.log("Graph contains negative weight cycle");
+            return;
+          }
+        }
+      }
 
     //build the shortest route from endVertex to startVertex using the distances hashmap
     let vtx = distances.get(endVtx);
@@ -215,10 +252,8 @@ export class WeightedGraph<T = string> {
     let result = [endVtx];
 
     while (vtx) {
-      if (vtx.previous !== null) {
-        result = [vtx.previous, ...result];
-        vtx = distances.get(vtx.previous);
-      }
+      if (vtx.previous !== null) result = [vtx.previous, ...result];
+      vtx = distances.get(vtx.previous as T);
     }
     return { totalDistance, result };
   }
